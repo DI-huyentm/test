@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.appName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        tier: backend
+    spec:
+      containers:
+        - name: mycontainer
+          image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          imagePullPolicy: Always
+          ports:
+          - name: http
+            containerPort: {{ .Values.port }}
+          - name: http-metrics
+            containerPort: {{ .Values.port }}
+          envFrom:
+          - configMapRef:
+              name: {{ .Values.configmap.name }}
+          resources:
+            requests:
+              memory: "16Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"

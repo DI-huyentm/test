@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    prometheus: main
+spec:
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.namespace }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      tier: backend
+  podMetricsEndpoints:
+    - port: http-metrics
+      path: /metrics
